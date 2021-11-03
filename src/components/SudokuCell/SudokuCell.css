@@ -1,0 +1,11 @@
+.SudokuCellInput {
+    width: 44px;
+    height: 44px;
+    text-align: center;
+    font-size: 30px;
+    border: none;
+}
+
+.SudokuCellInput:focus {
+    outline: none;
+}

@@ -1,0 +1,37 @@
+.SudokuBoard {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.SudokuTable {
+    width: 450px;
+    height: 450px;
+    border-collapse: collapse;
+}
+
+.SudokuRow {
+    width: 450px;
+    height: 50px;
+}
+
+.SudokuCell {
+    text-align: center;
+    border: solid 1px #000;
+    vertical-align: middle;
+}
+
+.LeftBorder {
+    border-left: 4px solid #000;
+}
+
+.RightBorder {
+    border-right: 4px solid #000;
+}
+
+.TopBorder {
+    border-top: 4px solid #000;
+}
+
+.BottomBorder {
+    border-bottom: 4px solid #000;
+}

@@ -1,0 +1,33 @@
+.ButtonPanel {
+    padding: 10px;
+}
+
+.SudokuButton {
+    display: inline;
+    height: 1.6rem;
+    padding: 0.1825rem 0;
+    cursor: pointer;
+    margin-left: 10px;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #2e6aa7;
+    background-color: #fff;
+    color: #2e6aa7;
+}
+
+.SudokuButton:hover {
+    background-color: #eaf2f8;
+}
+
+.SudokuButton:active {
+    background-color: #2e6aa7;
+    color: #fff;
+}
+
+.ButtonText {
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    min-width: 2rem;
+    height: 1.6rem;
+    justify-content: center;
+    border-radius: 0.25rem;
+}
