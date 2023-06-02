@@ -1,0 +1,24 @@
+.ActionToolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.ActionToolbar-button {
+  width: 5rem;
+  height: 2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #1a120b;
+  color: #ecf8f9;
+  cursor: pointer;
+  font-family: "Varela Round", sans-serif;
+}
+
+.ActionToolbar-button:active {
+  background-color: #ecf8f9;
+  color: #1a120b;
+  border: solid 1px #1a120b;
+}

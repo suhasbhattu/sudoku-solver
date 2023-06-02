@@ -1,0 +1,12 @@
+.AppHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a120b;
+  color: #ecf8f9;
+}
+
+.AppTitle {
+    font-size: 25px;
+}

@@ -1,0 +1,36 @@
+.SudokuGrid {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.SudokuGrid-Table {
+  border-collapse: collapse;
+}
+
+.SudokuGridCell {
+  height: 4rem;
+  width: 4rem;
+  border: solid 1px #1a120b;
+  text-align: center;
+  font-size: 35px;
+  font-family: "Varela Round", sans-serif;
+}
+
+.TopBorder {
+  border-top: solid 5px #1a120b;
+}
+
+.RightBorder {
+  border-right: solid 5px #1a120b;
+}
+
+.BottomBorder {
+  border-bottom: solid 5px #1a120b;
+}
+
+.LeftBorder {
+  border-left: solid 5px #1a120b;
+}

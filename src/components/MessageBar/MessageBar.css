@@ -1,0 +1,12 @@
+.MessageBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.ErrorStrip {
+  padding-inline: 1rem;
+  background-color: red;
+  color: white;
+}
