@@ -10,6 +10,7 @@ export interface SudokuSolverState {
   sudokuGrid: (number | null)[][];
   activeCell: [number, number];
   errorMessage: ErrorMessage;
+  possibilityArray: number[][][];
 }
 
 const initialState: SudokuSolverState = {
@@ -19,6 +20,7 @@ const initialState: SudokuSolverState = {
     isError: false,
     message: "",
   },
+  possibilityArray: [],
 };
 
 export const slice = createSlice({
@@ -42,14 +44,18 @@ export const slice = createSlice({
     setErrorMessage: (state, action: PayloadAction<ErrorMessage>) => {
       state.errorMessage = action.payload;
     },
+    setPossibilityArray: (state, action: PayloadAction<number[][][]>) => {
+      state.possibilityArray = action.payload;
+    },
   },
 });
- 
+
 export const {
   resetGrid,
   setActiveCell,
   setGridValue,
   setErrorMessage,
+  setPossibilityArray,
 } = slice.actions;
 
 export const selectGrid = (state: RootState) => state.sudokuSolver.sudokuGrid;
@@ -59,5 +65,8 @@ export const selectActiveCell = (state: RootState) =>
 
 export const selectErrorMessage = (state: RootState) =>
   state.sudokuSolver.errorMessage;
+
+export const selectPossibilityArray = (state: RootState) =>
+  state.sudokuSolver.possibilityArray;
 
 export default slice.reducer;

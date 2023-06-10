@@ -6,6 +6,7 @@ import {
   setActiveCell,
   setErrorMessage,
   setGridValue,
+  setPossibilityArray,
 } from "../../store/slice";
 import sudokuGridUtils from "../../util/sudokuGridUtil";
 
@@ -77,7 +78,7 @@ const SudokuGrid = () => {
         message: validateResult.errorMessage,
       })
     );
-    console.log(buildPossibilityArray(sudokuGrid));
+    dispatch(setPossibilityArray(buildPossibilityArray(sudokuGrid)));
   }, [sudokuGrid, validateSudoku, dispatch, buildPossibilityArray]);
 
   return (
