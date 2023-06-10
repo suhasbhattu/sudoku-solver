@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectActiveCell,
@@ -13,50 +14,38 @@ import "./SudokuGrid.css";
 const SudokuGrid = () => {
   const sudokuGrid = useSelector(selectGrid);
   const activeCell = useSelector(selectActiveCell);
-  const { validateSudokuRow } = sudokuGridUtils;
   const dispatch = useDispatch();
+  const { validateSudoku, buildPossibilityArray } = sudokuGridUtils;
 
   const onCellClick = (rowNumber: number, columnNumber: number) => {
-    dispatch(setActiveCell([rowNumber - 1, columnNumber - 1]));
+    dispatch(setActiveCell([rowNumber, columnNumber]));
   };
 
-  const onKeyPress = (event: any) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTableCellElement>) => {
     const value = Number(event.key);
-    if (!isNaN(value) && value > 0) {
+    if (!isNaN(value) && value > 0 && value < 10) {
       dispatch(setGridValue(value));
-    } else if (event.key === "Tab") {
-      const columnIndex = (event.target.cellIndex + 1) % 9;
-      const rowIndex =
-        columnIndex === 0
-          ? event.target.parentElement.rowIndex + 1
-          : event.target.parentElement.rowIndex;
-      dispatch(setActiveCell([rowIndex, columnIndex]));
+    } else if (event.key === "Backspace" || event.key === "Delete") {
+      dispatch(setGridValue(null));
     }
-    const rowValidation = validateSudokuRow(sudokuGrid);
-    dispatch(
-      setErrorMessage({
-        isError: rowValidation.isError,
-        message: rowValidation.message,
-      })
-    );
   };
 
   const getRows = () => {
-    const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     return indices.map((rowIndex) => {
       const getColumns = () => {
         return indices.map((columnIndex) => {
           const classesList = ["SudokuGridCell"];
-          if (rowIndex === 1) {
+          if (rowIndex === 0) {
             classesList.push("TopBorder");
           }
-          if ([3, 6, 9].includes(columnIndex)) {
+          if ([2, 5, 8].includes(columnIndex)) {
             classesList.push("RightBorder");
           }
-          if ([3, 6, 9].includes(rowIndex)) {
+          if ([2, 5, 8].includes(rowIndex)) {
             classesList.push("BottomBorder");
           }
-          if (columnIndex === 1) {
+          if (columnIndex === 0) {
             classesList.push("LeftBorder");
           }
           if (rowIndex === activeCell[0] && columnIndex === activeCell[1]) {
@@ -68,9 +57,10 @@ const SudokuGrid = () => {
               key={`cell-${rowIndex}${columnIndex}`}
               className={className}
               onClick={() => onCellClick(rowIndex, columnIndex)}
+              onKeyDown={(event) => onKeyDown(event)}
               tabIndex={0}
             >
-              {sudokuGrid[rowIndex - 1][columnIndex - 1] ?? ""}
+              {sudokuGrid[rowIndex][columnIndex] ?? ""}
             </td>
           );
         });
@@ -79,9 +69,20 @@ const SudokuGrid = () => {
     });
   };
 
+  useEffect(() => {
+    const validateResult = validateSudoku(sudokuGrid);
+    dispatch(
+      setErrorMessage({
+        isError: validateResult.hasError,
+        message: validateResult.errorMessage,
+      })
+    );
+    console.log(buildPossibilityArray(sudokuGrid));
+  }, [sudokuGrid, validateSudoku, dispatch, buildPossibilityArray]);
+
   return (
     <div className="SudokuGrid">
-      <table className="SudokuGrid-Table" onKeyDown={onKeyPress}>
+      <table className="SudokuGrid-Table">
         <tbody>{getRows()}</tbody>
       </table>
     </div>

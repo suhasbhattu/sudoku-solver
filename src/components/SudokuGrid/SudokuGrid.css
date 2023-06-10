@@ -34,3 +34,7 @@
 .LeftBorder {
   border-left: solid 5px #1a120b;
 }
+
+.ActiveCell {
+  background-color: #d7d7d7;
+}

@@ -17,8 +17,13 @@
   font-family: "Varela Round", sans-serif;
 }
 
-.ActionToolbar-button:active {
+.ActionToolbar-button:enabled:active {
   background-color: #ecf8f9;
   color: #1a120b;
   border: solid 1px #1a120b;
+}
+
+.ActionToolbar-button:disabled {
+  cursor: default;
+  opacity: 0.4;
 }

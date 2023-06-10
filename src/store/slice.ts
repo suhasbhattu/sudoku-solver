@@ -27,12 +27,14 @@ export const slice = createSlice({
   reducers: {
     resetGrid: (state) => {
       state.sudokuGrid = new Array(9).fill(new Array(9).fill(null));
+      state.activeCell[0] = -1;
+      state.activeCell[1] = -1;
     },
     setActiveCell: (state, action: PayloadAction<[number, number]>) => {
       state.activeCell[0] = action.payload[0];
       state.activeCell[1] = action.payload[1];
     },
-    setGridValue: (state, action: PayloadAction<number>) => {
+    setGridValue: (state, action: PayloadAction<number | null>) => {
       const rowIndex = state.activeCell[0];
       const columnIndex = state.activeCell[1];
       state.sudokuGrid[rowIndex][columnIndex] = action.payload;
@@ -42,9 +44,13 @@ export const slice = createSlice({
     },
   },
 });
-
-export const { resetGrid, setActiveCell, setGridValue, setErrorMessage } =
-  slice.actions;
+ 
+export const {
+  resetGrid,
+  setActiveCell,
+  setGridValue,
+  setErrorMessage,
+} = slice.actions;
 
 export const selectGrid = (state: RootState) => state.sudokuSolver.sudokuGrid;
 
