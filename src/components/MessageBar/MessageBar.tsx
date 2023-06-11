@@ -5,16 +5,22 @@ import "./MessageBar.css";
 
 const MessageBar = () => {
   const errorMessage = useSelector(selectErrorMessage);
-  const classesList = [];
-  if (errorMessage.isError) {
+  const classesList = ["content"];
+  if (errorMessage.state === 'Error') {
     classesList.push("ErrorStrip");
+  } else if (errorMessage.state === 'Success') {
+    classesList.push("SuccessStrip");
+  } else if (errorMessage.state === 'Processing') {
+    classesList.push("ProcessingStrip");
   }
   const className = classesList.join(" ");
   return (
     <div className="MessageBar">
-      <span className={className}>
-        {errorMessage.isError ? errorMessage.message : ""}
-      </span>
+      {errorMessage.message && (
+        <div className={className}>
+          <span>{errorMessage.message}</span>
+        </div>
+      )}
     </div>
   );
 };

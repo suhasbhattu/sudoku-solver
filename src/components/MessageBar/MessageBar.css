@@ -1,12 +1,33 @@
 .MessageBar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  font-family: "Varela Round", sans-serif;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-areas: "content";
   justify-content: center;
+  align-items: center;
+}
+
+.content {
+  inline-size: 36rem;
+  text-align: center;
+  border-radius: 10px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  block-size: 2rem;
 }
 
 .ErrorStrip {
-  padding-inline: 1rem;
-  background-color: red;
-  color: white;
+  background-color: #ea1010;
+  color: #ffffff;
+}
+
+.SuccessStrip {
+  background-color: #00a800;
+  color: #ffffff;
+}
+
+.ProcessingStrip {
+  background-color: #0070f2;
+  color: #ffffff;
 }

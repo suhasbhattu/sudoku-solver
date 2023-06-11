@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectActiveCell,
+  selectErrorMessage,
   selectGrid,
   setActiveCell,
   setErrorMessage,
@@ -14,6 +15,7 @@ import "./SudokuGrid.css";
 
 const SudokuGrid = () => {
   const sudokuGrid = useSelector(selectGrid);
+  const errorMessage = useSelector(selectErrorMessage);
   const activeCell = useSelector(selectActiveCell);
   const dispatch = useDispatch();
   const { validateSudoku, buildPossibilityArray } = sudokuGridUtils;
@@ -72,16 +74,26 @@ const SudokuGrid = () => {
 
   useEffect(() => {
     const validateResult = validateSudoku(sudokuGrid);
-    dispatch(
-      setErrorMessage({
-        isError: validateResult.hasError,
-        message: validateResult.errorMessage,
-      })
-    );
+    if (
+      errorMessage.state !== "Success" &&
+      errorMessage.state !== "Processing"
+    ) {
+      dispatch(
+        setErrorMessage({
+          state: validateResult.hasError ? "Error" : "None",
+          message: validateResult.errorMessage,
+        })
+      );
+    }
     const possibilityArray = buildPossibilityArray(sudokuGrid);
-    console.log(possibilityArray);
     dispatch(setPossibilityArray(possibilityArray));
-  }, [sudokuGrid, validateSudoku, dispatch, buildPossibilityArray]);
+  }, [
+    sudokuGrid,
+    validateSudoku,
+    dispatch,
+    buildPossibilityArray,
+    errorMessage.state,
+  ]);
 
   return (
     <div className="SudokuGrid">
