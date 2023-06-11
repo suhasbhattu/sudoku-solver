@@ -78,7 +78,9 @@ const SudokuGrid = () => {
         message: validateResult.errorMessage,
       })
     );
-    dispatch(setPossibilityArray(buildPossibilityArray(sudokuGrid)));
+    const possibilityArray = buildPossibilityArray(sudokuGrid);
+    console.log(possibilityArray);
+    dispatch(setPossibilityArray(possibilityArray));
   }, [sudokuGrid, validateSudoku, dispatch, buildPossibilityArray]);
 
   return (

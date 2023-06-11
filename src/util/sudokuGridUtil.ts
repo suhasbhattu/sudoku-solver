@@ -3,7 +3,9 @@ const validateDuplication = (list: (number | null)[]) => {
   return new Set(updatedList).size === updatedList.length;
 };
 
-const getColumnWiseGrid = (grid: (number | null)[][] | number[][][]) => {
+const getColumnWiseGrid = (
+  grid: (number | null)[][] | (number[] | null)[][]
+) => {
   const updatedGrid = [];
   for (let index = 0; index < 9; index++) {
     updatedGrid.push(new Array(9).fill(null));
@@ -16,7 +18,9 @@ const getColumnWiseGrid = (grid: (number | null)[][] | number[][][]) => {
   return updatedGrid;
 };
 
-const getBlockWiseGrid = (grid: (number | null)[][] | number[][][]) => {
+const getBlockWiseGrid = (
+  grid: (number | null)[][] | (number[] | null)[][]
+) => {
   const updatedGrid = [];
   for (let index = 0; index < 9; index++) {
     updatedGrid.push(new Array(9).fill(null));
@@ -113,7 +117,7 @@ const validateSudoku = (grid: (number | null)[][]) => {
 };
 
 const buildPossibilityArray = (grid: (number | null)[][]) => {
-  const possibilityArray: number[][][] = [];
+  const possibilityArray: (number[] | null)[][] = [];
   for (let index = 0; index < 9; index++) {
     possibilityArray.push([]);
     for (let index2 = 0; index2 < 9; index2++) {
@@ -133,11 +137,59 @@ const buildPossibilityArray = (grid: (number | null)[][]) => {
         let block = getBlockWiseGrid(grid)[blockNumber];
         for (let i = 1; i < 10; i++) {
           if (!row.includes(i) && !column.includes(i) && !block.includes(i)) {
-            possibilityArray[index][index2].push(i);
+            possibilityArray[index][index2]?.push(i);
           }
         }
       } else {
-        possibilityArray[index][index2] = [grid[index][index2] ?? -1];
+        possibilityArray[index][index2] = null;
+      }
+    }
+  }
+
+  for (let index = 0; index < possibilityArray.length; index++) {
+    for (let index2 = 0; index2 < possibilityArray.length; index2++) {
+      if (possibilityArray[index][index2] !== null) {
+        let rowNumber = index;
+        let columnNumber = index2;
+        let blockNumber = 3 * Math.floor(index / 3) + Math.floor(index2 / 3);
+        let row = possibilityArray[rowNumber];
+        let column = getColumnWiseGrid(possibilityArray)[columnNumber];
+        let block = getBlockWiseGrid(possibilityArray)[blockNumber];
+        for (let i = 1; i < 10; i++) {
+          let count = 0;
+          let key = -1;
+          for (let index3 = 0; index3 < row.length; index3++) {
+            if (row[index3] !== null && row[index3]?.includes(i)) {
+              count++;
+              key = index3;
+            }
+          }
+          if (count === 1 && index2 === key) {
+            possibilityArray[index][index2] = [i];
+          } else {
+            count = 0;
+            key = -1;
+            for (let index3 = 0; index3 < column.length; index3++) {
+              if (column[index3] !== null && column[index3]?.includes(i)) {
+                count++;
+              }
+            }
+            if (count === 1 && index2 === key) {
+              possibilityArray[index][index2] = [i];
+            } else {
+              count = 0;
+              key = -1;
+              for (let index3 = 0; index3 < block.length; index3++) {
+                if (block[index3] !== null && block[index3]?.includes(i)) {
+                  count++;
+                }
+              }
+              if (count === 1 && index2 === key) {
+                possibilityArray[index][index2] = [i];
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -145,9 +197,26 @@ const buildPossibilityArray = (grid: (number | null)[][]) => {
   return possibilityArray;
 };
 
+const getSinglePossibility = (possibilityArray: (number[] | null)[][]) => {
+  let result = [];
+  for (let index = 0; index < possibilityArray.length; index++) {
+    for (let index2 = 0; index2 < possibilityArray.length; index2++) {
+      if (possibilityArray[index][index2] !== null && possibilityArray[index][index2]?.length === 1) {
+        result.push(index);
+        result.push(index2);
+        const value = possibilityArray[index][index2] ?? [];
+        result.push(value[0]);
+        break;
+      }
+    }
+  }
+  return result;
+}
+
 const sudokuGridUtils = {
   validateSudoku: validateSudoku,
   buildPossibilityArray: buildPossibilityArray,
+  getSinglePossibility: getSinglePossibility,
 };
 
 export default sudokuGridUtils;

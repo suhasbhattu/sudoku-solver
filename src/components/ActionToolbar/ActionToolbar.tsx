@@ -11,9 +11,15 @@ const ActionToolbar = () => {
     dispatch(resetGrid());
   };
 
+  const onSolvePress = () => {};
+
   return (
     <div className="ActionToolbar">
-      <button className="ActionToolbar-button" disabled={errorMessage.isError}>
+      <button
+        className="ActionToolbar-button"
+        disabled={errorMessage.isError}
+        onClick={onSolvePress}
+      >
         Solve
       </button>
       <button className="ActionToolbar-button" onClick={onResetPress}>
