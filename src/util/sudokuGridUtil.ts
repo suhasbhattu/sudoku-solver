@@ -201,7 +201,10 @@ const getSinglePossibility = (possibilityArray: (number[] | null)[][]) => {
   let result = [];
   for (let index = 0; index < possibilityArray.length; index++) {
     for (let index2 = 0; index2 < possibilityArray.length; index2++) {
-      if (possibilityArray[index][index2] !== null && possibilityArray[index][index2]?.length === 1) {
+      if (
+        possibilityArray[index][index2] !== null &&
+        possibilityArray[index][index2]?.length === 1
+      ) {
         result.push(index);
         result.push(index2);
         const value = possibilityArray[index][index2] ?? [];
@@ -211,12 +214,49 @@ const getSinglePossibility = (possibilityArray: (number[] | null)[][]) => {
     }
   }
   return result;
-}
+};
+
+const isSudokuSolved = (grid: (number | null)[][]) => {
+  let result = true;
+  for (let index = 0; index < grid.length; index++) {
+    for (let index2 = 0; index2 < grid[index].length; index2++) {
+      if (grid[index][index2] === null) {
+        result = false;
+        break;
+      }
+    }
+  }
+  return result;
+};
+
+const getFirstBacktrackValue = (possibilityArray: (number[] | null)[][]) => {
+  let result = [];
+  for (let index = 0; index < possibilityArray.length; index++) {
+    for (let index2 = 0; index2 < possibilityArray.length; index2++) {
+      if (
+        possibilityArray[index][index2] !== null &&
+        possibilityArray[index][index2]?.length === 2
+      ) {
+        result.push(index);
+        result.push(index2);
+        const value = possibilityArray[index][index2] ?? [];
+        result.push(value[0]);
+        break;
+      }
+    }
+    if (result.length !== 0) {
+      break;
+    }
+  }
+  return result;
+};
 
 const sudokuGridUtils = {
   validateSudoku: validateSudoku,
   buildPossibilityArray: buildPossibilityArray,
   getSinglePossibility: getSinglePossibility,
+  isSudokuSolved: isSudokuSolved,
+  getFirstBacktrackValue: getFirstBacktrackValue,
 };
 
 export default sudokuGridUtils;
