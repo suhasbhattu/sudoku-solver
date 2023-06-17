@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { cloneDeep } from "lodash";
 import sudokuGridUtils from "../../util/sudokuGridUtil";
 import {
   resetGrid,
@@ -12,10 +11,6 @@ import {
   setErrorMessage,
   setGridValueFromIndices,
   setSolvingMode,
-  selectBacktrackModeOn,
-  selectBacktrackStack,
-  setBacktrackStack,
-  selectRollabckModeOn,
 } from "../../store/slice";
 
 import "./ActionToolbar.css";
@@ -26,15 +21,7 @@ const ActionToolbar = () => {
   const solvingMode = useSelector(selectSolvingMode);
   const possibilityArray = useSelector(selectPossibilityArray);
   const sudokuGrid = useSelector(selectGrid);
-  const backtrackModeOn = useSelector(selectBacktrackModeOn);
-  const rollbackModeOn = useSelector(selectRollabckModeOn);
-  const backtrackStack = useSelector(selectBacktrackStack);
-  const {
-    getSinglePossibility,
-    isSudokuSolved,
-    getFirstBacktrackValue,
-    validateSudoku,
-  } = sudokuGridUtils;
+  const { getSinglePossibility, isSudokuSolved } = sudokuGridUtils;
 
   const onResetPress = () => {
     dispatch(resetGrid());
@@ -62,27 +49,18 @@ const ActionToolbar = () => {
               result[2] === -1 ? null : result[2],
             ])
           );
-          if (backtrackModeOn && !rollbackModeOn) {
-            const stackClone = cloneDeep(backtrackStack);
-            stackClone.push({
-              row: result[0],
-              column: result[1],
-              value: result[2],
-            });
-            dispatch(setBacktrackStack(stackClone));
-          }
           resolve(msec);
         }, msec);
       });
     },
-    [dispatch, backtrackModeOn, backtrackStack, rollbackModeOn]
+    [dispatch]
   );
 
   useEffect(() => {
     const solveSudoku = async () => {
       if (solvingMode) {
         const result = getSinglePossibility(possibilityArray);
-        if (result.length > 0 && !rollbackModeOn) {
+        if (result.length > 0) {
           await sleep(result, 100);
         } else {
           if (isSudokuSolved(sudokuGrid)) {
@@ -106,10 +84,6 @@ const ActionToolbar = () => {
     sleep,
     isSudokuSolved,
     sudokuGrid,
-    getFirstBacktrackValue,
-    backtrackStack,
-    validateSudoku,
-    rollbackModeOn,
   ]);
 
   return (
