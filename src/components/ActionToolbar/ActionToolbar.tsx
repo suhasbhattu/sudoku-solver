@@ -1,13 +1,19 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { cloneDeep } from "lodash";
 import sudokuGridUtils from "../../util/sudokuGridUtil";
 import {
   resetGrid,
+  selectBacktrackModeOn,
+  selectBacktrackStack,
   selectErrorMessage,
   selectGrid,
   selectPossibilityArray,
+  selectRollabckModeOn,
   selectSolvingMode,
   setActiveCell,
+  setBacktrackModeOn,
+  setBacktrackStack,
   setErrorMessage,
   setGridValueFromIndices,
   setSolvingMode,
@@ -21,7 +27,11 @@ const ActionToolbar = () => {
   const solvingMode = useSelector(selectSolvingMode);
   const possibilityArray = useSelector(selectPossibilityArray);
   const sudokuGrid = useSelector(selectGrid);
-  const { getSinglePossibility, isSudokuSolved } = sudokuGridUtils;
+  const backtrackModeOn = useSelector(selectBacktrackModeOn);
+  const backtrackStack = useSelector(selectBacktrackStack);
+  const rollbackModeOn = useSelector(selectRollabckModeOn);
+  const { getSinglePossibility, isSudokuSolved, getFirstBacktrackValue } =
+    sudokuGridUtils;
 
   const onResetPress = () => {
     dispatch(resetGrid());
@@ -49,11 +59,20 @@ const ActionToolbar = () => {
               result[2] === -1 ? null : result[2],
             ])
           );
+          if (backtrackModeOn && !rollbackModeOn) {
+            const stackClone = cloneDeep(backtrackStack);
+            stackClone.push({
+              row: result[0],
+              column: result[1],
+              value: result[2],
+            });
+            dispatch(setBacktrackStack(stackClone));
+          }
           resolve(msec);
         }, msec);
       });
     },
-    [dispatch]
+    [dispatch, backtrackModeOn, backtrackStack, rollbackModeOn]
   );
 
   useEffect(() => {
@@ -71,6 +90,13 @@ const ActionToolbar = () => {
                 message: "Sudoku got solved!!",
               })
             );
+          } else if (!backtrackModeOn && !rollbackModeOn) {
+            const firstbacktrackValue =
+              getFirstBacktrackValue(possibilityArray);
+            if (firstbacktrackValue.length > 0) {
+              dispatch(setBacktrackModeOn(true));
+              await sleep(firstbacktrackValue, 100);
+            }
           }
         }
       }
@@ -84,7 +110,25 @@ const ActionToolbar = () => {
     sleep,
     isSudokuSolved,
     sudokuGrid,
+    getFirstBacktrackValue,
+    backtrackModeOn,
+    rollbackModeOn,
+    backtrackStack,
   ]);
+
+  useEffect(() => {
+    const rollbackToSafeState = async () => {
+      const stackClone = cloneDeep(backtrackStack);
+      const poppedItem = stackClone.pop();
+      if (poppedItem) {
+        await sleep([poppedItem.row, poppedItem.column, -1], 100);
+        dispatch(setBacktrackStack(stackClone));
+      }
+    };
+    if (rollbackModeOn && backtrackStack.length > 0) {
+      rollbackToSafeState();
+    }
+  }, [rollbackModeOn, backtrackStack, sleep, dispatch]);
 
   return (
     <div className="ActionToolbar">

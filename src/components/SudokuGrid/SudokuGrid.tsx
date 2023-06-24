@@ -4,6 +4,7 @@ import {
   selectActiveCell,
   selectErrorMessage,
   selectGrid,
+  selectRollabckModeOn,
   setActiveCell,
   setErrorMessage,
   setGridValue,
@@ -19,6 +20,7 @@ const SudokuGrid = () => {
   const activeCell = useSelector(selectActiveCell);
   const dispatch = useDispatch();
   const { validateSudoku, buildPossibilityArray } = sudokuGridUtils;
+  const rollbackModeOn = useSelector(selectRollabckModeOn);
 
   const onCellClick = (rowNumber: number, columnNumber: number) => {
     dispatch(setActiveCell([rowNumber, columnNumber]));
@@ -86,13 +88,16 @@ const SudokuGrid = () => {
       );
     }
     const possibilityArray = buildPossibilityArray(sudokuGrid);
-    dispatch(setPossibilityArray(possibilityArray));
+    if (!rollbackModeOn) {
+      dispatch(setPossibilityArray(possibilityArray));
+    }
   }, [
     sudokuGrid,
     validateSudoku,
     dispatch,
     buildPossibilityArray,
     errorMessage.state,
+    rollbackModeOn,
   ]);
 
   return (
