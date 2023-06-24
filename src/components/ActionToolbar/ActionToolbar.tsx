@@ -16,6 +16,7 @@ import {
   setBacktrackStack,
   setErrorMessage,
   setGridValueFromIndices,
+  setRollbackModeOn,
   setSolvingMode,
 } from "../../store/slice";
 
@@ -94,9 +95,12 @@ const ActionToolbar = () => {
             const firstbacktrackValue =
               getFirstBacktrackValue(possibilityArray);
             if (firstbacktrackValue.length > 0) {
-              dispatch(setBacktrackModeOn(true));
               await sleep(firstbacktrackValue, 100);
+              dispatch(setBacktrackModeOn(true));
             }
+          } else if (backtrackModeOn) {
+            dispatch(setRollbackModeOn(true));
+            dispatch(setBacktrackModeOn(false));
           }
         }
       }
