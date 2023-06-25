@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { cloneDeep } from "lodash";
 import sudokuGridUtils from "../../util/sudokuGridUtil";
@@ -31,6 +31,7 @@ const ActionToolbar = () => {
   const backtrackModeOn = useSelector(selectBacktrackModeOn);
   const backtrackStack = useSelector(selectBacktrackStack);
   const rollbackModeOn = useSelector(selectRollabckModeOn);
+  const [correctChoice, setCorrectChoice] = useState<number[]>([]);
   const { getSinglePossibility, isSudokuSolved, getFirstBacktrackValue } =
     sudokuGridUtils;
 
@@ -95,6 +96,11 @@ const ActionToolbar = () => {
             const firstbacktrackValue =
               getFirstBacktrackValue(possibilityArray);
             if (firstbacktrackValue.length > 0) {
+              setCorrectChoice([
+                firstbacktrackValue[0],
+                firstbacktrackValue[1],
+                firstbacktrackValue[3],
+              ]);
               await sleep(firstbacktrackValue, 100);
               dispatch(setBacktrackModeOn(true));
             }
@@ -133,6 +139,21 @@ const ActionToolbar = () => {
       rollbackToSafeState();
     }
   }, [rollbackModeOn, backtrackStack, sleep, dispatch]);
+
+  useEffect(() => {
+    const setCorrectValue = async () => {
+      dispatch(setRollbackModeOn(false));
+      await sleep([correctChoice[0], correctChoice[1], correctChoice[2]], 100);
+      dispatch(setBacktrackModeOn(true));
+    };
+    if (
+      rollbackModeOn &&
+      backtrackStack.length === 0 &&
+      correctChoice.length > 0
+    ) {
+      setCorrectValue();
+    }
+  }, [rollbackModeOn, backtrackStack, correctChoice, sleep, dispatch]);
 
   return (
     <div className="ActionToolbar">

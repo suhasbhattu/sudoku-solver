@@ -233,14 +233,13 @@ const getFirstBacktrackValue = (possibilityArray: (number[] | null)[][]) => {
   let result = [];
   for (let index = 0; index < possibilityArray.length; index++) {
     for (let index2 = 0; index2 < possibilityArray.length; index2++) {
-      if (
-        possibilityArray[index][index2] !== null &&
-        possibilityArray[index][index2]?.length === 2
-      ) {
+      const possibility = possibilityArray[index][index2];
+      if (possibility !== null && possibility.length > 1) {
         result.push(index);
         result.push(index2);
-        const value = possibilityArray[index][index2] ?? [];
+        const value = possibility ?? [];
         result.push(value[0]);
+        result.push(value[1]);
         break;
       }
     }
