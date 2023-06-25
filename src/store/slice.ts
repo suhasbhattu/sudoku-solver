@@ -6,12 +6,6 @@ interface ErrorMessage {
   message: string;
 }
 
-interface BacktrackInstance {
-  row: number;
-  column: number;
-  value: number;
-}
-
 export interface SudokuSolverState {
   sudokuGrid: (number | null)[][];
   activeCell: [number, number];
@@ -19,8 +13,6 @@ export interface SudokuSolverState {
   possibilityArray: (number[] | null)[][];
   solvingMode: boolean;
   backtrackModeOn: boolean;
-  rollbackModeOn: boolean;
-  backtrackStack: BacktrackInstance[];
 }
 
 const initializeGrid = () => {
@@ -41,8 +33,6 @@ const initialState: SudokuSolverState = {
   possibilityArray: [],
   solvingMode: false,
   backtrackModeOn: false,
-  rollbackModeOn: false,
-  backtrackStack: [],
 };
 
 export const slice = createSlice({
@@ -87,12 +77,6 @@ export const slice = createSlice({
     setBacktrackModeOn: (state, action: PayloadAction<boolean>) => {
       state.backtrackModeOn = action.payload;
     },
-    setRollbackModeOn: (state, action: PayloadAction<boolean>) => {
-      state.rollbackModeOn = action.payload;
-    },
-    setBacktrackStack: (state, action: PayloadAction<BacktrackInstance[]>) => {
-      state.backtrackStack = action.payload;
-    },
   },
 });
 
@@ -105,8 +89,6 @@ export const {
   setGridValueFromIndices,
   setSolvingMode,
   setBacktrackModeOn,
-  setRollbackModeOn,
-  setBacktrackStack,
 } = slice.actions;
 
 export const selectGrid = (state: RootState) => state.sudokuSolver.sudokuGrid;
@@ -125,11 +107,5 @@ export const selectSolvingMode = (state: RootState) =>
 
 export const selectBacktrackModeOn = (state: RootState) =>
   state.sudokuSolver.backtrackModeOn;
-
-export const selectRollabckModeOn = (state: RootState) =>
-  state.sudokuSolver.rollbackModeOn;
-
-export const selectBacktrackStack = (state: RootState) =>
-  state.sudokuSolver.backtrackStack;
 
 export default slice.reducer;
