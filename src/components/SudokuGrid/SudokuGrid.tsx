@@ -9,7 +9,7 @@ import {
   setGridValue,
   setPossibilityArray,
 } from "../../store/slice";
-import sudokuGridUtils from "../../util/sudokuGridUtil";
+import useSudokuGrid from "../../util/sudokuGridUtil";
 
 import "./SudokuGrid.css";
 
@@ -18,7 +18,7 @@ const SudokuGrid = () => {
   const errorMessage = useSelector(selectErrorMessage);
   const activeCell = useSelector(selectActiveCell);
   const dispatch = useDispatch();
-  const { validateSudoku, buildPossibilityArray } = sudokuGridUtils;
+  const { validateSudoku, buildPossibilityArray } = useSudokuGrid();
 
   const onCellClick = (rowNumber: number, columnNumber: number) => {
     dispatch(setActiveCell([rowNumber, columnNumber]));
@@ -75,8 +75,8 @@ const SudokuGrid = () => {
   useEffect(() => {
     const validateResult = validateSudoku(sudokuGrid);
     if (
-      errorMessage.state !== "Success" &&
-      errorMessage.state !== "Processing"
+      (errorMessage.state === "Error" && !validateResult.hasError) ||
+      (errorMessage.state === "None" && validateResult.hasError)
     ) {
       dispatch(
         setErrorMessage({

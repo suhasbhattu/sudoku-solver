@@ -88,90 +88,81 @@ const validateSubGrid = (grid: (number | null)[][]) => {
   };
 };
 
-const validateSudoku = (grid: (number | null)[][]) => {
-  let hasError = false;
-  let errorMessage = "";
+const useSudokuGrid = () => {
+  const validateSudoku = (grid: (number | null)[][]) => {
+    let hasError = false;
+    let errorMessage = "";
 
-  const rowsValidation = validateRows(grid);
-  if (rowsValidation.hasError) {
-    hasError = true;
-    errorMessage = `Row ${rowsValidation.number} has a dupliacte value.`;
-  } else {
-    const columnsValidation = validateColumns(grid);
-    if (columnsValidation.hasError) {
+    const rowsValidation = validateRows(grid);
+    if (rowsValidation.hasError) {
       hasError = true;
-      errorMessage = `Column ${columnsValidation.number} has a duplicate value.`;
+      errorMessage = `Row ${rowsValidation.number} has a dupliacte value.`;
     } else {
-      const blockValidation = validateSubGrid(grid);
-      if (blockValidation.hasError) {
+      const columnsValidation = validateColumns(grid);
+      if (columnsValidation.hasError) {
         hasError = true;
-        errorMessage = `Block ${blockValidation.number} has a duplicate value.`;
-      }
-    }
-  }
-
-  return {
-    hasError: hasError,
-    errorMessage: errorMessage,
-  };
-};
-
-const buildPossibilityArray = (grid: (number | null)[][]) => {
-  const possibilityArray: (number[] | null)[][] = [];
-  for (let index = 0; index < 9; index++) {
-    possibilityArray.push([]);
-    for (let index2 = 0; index2 < 9; index2++) {
-      possibilityArray[index][index2] = [];
-    }
-  }
-
-  for (let index = 0; index < grid.length; index++) {
-    for (let index2 = 0; index2 < grid.length; index2++) {
-      if (grid[index][index2] === null) {
-        possibilityArray[index][index2] = [];
-        let rowNumber = index;
-        let columnNumber = index2;
-        let blockNumber = 3 * Math.floor(index / 3) + Math.floor(index2 / 3);
-        let row = grid[rowNumber];
-        let column = getColumnWiseGrid(grid)[columnNumber];
-        let block = getBlockWiseGrid(grid)[blockNumber];
-        for (let i = 1; i < 10; i++) {
-          if (!row.includes(i) && !column.includes(i) && !block.includes(i)) {
-            possibilityArray[index][index2]?.push(i);
-          }
-        }
+        errorMessage = `Column ${columnsValidation.number} has a duplicate value.`;
       } else {
-        possibilityArray[index][index2] = null;
+        const blockValidation = validateSubGrid(grid);
+        if (blockValidation.hasError) {
+          hasError = true;
+          errorMessage = `Block ${blockValidation.number} has a duplicate value.`;
+        }
       }
     }
-  }
 
-  for (let index = 0; index < possibilityArray.length; index++) {
-    for (let index2 = 0; index2 < possibilityArray.length; index2++) {
-      if (possibilityArray[index][index2] !== null) {
-        let rowNumber = index;
-        let columnNumber = index2;
-        let blockNumber = 3 * Math.floor(index / 3) + Math.floor(index2 / 3);
-        let row = possibilityArray[rowNumber];
-        let column = getColumnWiseGrid(possibilityArray)[columnNumber];
-        let block = getBlockWiseGrid(possibilityArray)[blockNumber];
-        for (let i = 1; i < 10; i++) {
-          let count = 0;
-          let key = -1;
-          for (let index3 = 0; index3 < row.length; index3++) {
-            if (row[index3] !== null && row[index3]?.includes(i)) {
-              count++;
-              key = index3;
+    return {
+      hasError: hasError,
+      errorMessage: errorMessage,
+    };
+  };
+
+  const buildPossibilityArray = (grid: (number | null)[][]) => {
+    const possibilityArray: (number[] | null)[][] = [];
+    for (let index = 0; index < 9; index++) {
+      possibilityArray.push([]);
+      for (let index2 = 0; index2 < 9; index2++) {
+        possibilityArray[index][index2] = [];
+      }
+    }
+
+    for (let index = 0; index < grid.length; index++) {
+      for (let index2 = 0; index2 < grid.length; index2++) {
+        if (grid[index][index2] === null) {
+          possibilityArray[index][index2] = [];
+          let rowNumber = index;
+          let columnNumber = index2;
+          let blockNumber = 3 * Math.floor(index / 3) + Math.floor(index2 / 3);
+          let row = grid[rowNumber];
+          let column = getColumnWiseGrid(grid)[columnNumber];
+          let block = getBlockWiseGrid(grid)[blockNumber];
+          for (let i = 1; i < 10; i++) {
+            if (!row.includes(i) && !column.includes(i) && !block.includes(i)) {
+              possibilityArray[index][index2]?.push(i);
             }
           }
-          if (count === 1 && index2 === key) {
-            possibilityArray[index][index2] = [i];
-          } else {
-            count = 0;
-            key = -1;
-            for (let index3 = 0; index3 < column.length; index3++) {
-              if (column[index3] !== null && column[index3]?.includes(i)) {
+        } else {
+          possibilityArray[index][index2] = null;
+        }
+      }
+    }
+
+    for (let index = 0; index < possibilityArray.length; index++) {
+      for (let index2 = 0; index2 < possibilityArray.length; index2++) {
+        if (possibilityArray[index][index2] !== null) {
+          let rowNumber = index;
+          let columnNumber = index2;
+          let blockNumber = 3 * Math.floor(index / 3) + Math.floor(index2 / 3);
+          let row = possibilityArray[rowNumber];
+          let column = getColumnWiseGrid(possibilityArray)[columnNumber];
+          let block = getBlockWiseGrid(possibilityArray)[blockNumber];
+          for (let i = 1; i < 10; i++) {
+            let count = 0;
+            let key = -1;
+            for (let index3 = 0; index3 < row.length; index3++) {
+              if (row[index3] !== null && row[index3]?.includes(i)) {
                 count++;
+                key = index3;
               }
             }
             if (count === 1 && index2 === key) {
@@ -179,100 +170,110 @@ const buildPossibilityArray = (grid: (number | null)[][]) => {
             } else {
               count = 0;
               key = -1;
-              for (let index3 = 0; index3 < block.length; index3++) {
-                if (block[index3] !== null && block[index3]?.includes(i)) {
+              for (let index3 = 0; index3 < column.length; index3++) {
+                if (column[index3] !== null && column[index3]?.includes(i)) {
                   count++;
                 }
               }
               if (count === 1 && index2 === key) {
                 possibilityArray[index][index2] = [i];
+              } else {
+                count = 0;
+                key = -1;
+                for (let index3 = 0; index3 < block.length; index3++) {
+                  if (block[index3] !== null && block[index3]?.includes(i)) {
+                    count++;
+                  }
+                }
+                if (count === 1 && index2 === key) {
+                  possibilityArray[index][index2] = [i];
+                }
               }
             }
           }
         }
       }
     }
-  }
+    return possibilityArray;
+  };
 
-  return possibilityArray;
-};
-
-const getSinglePossibility = (possibilityArray: (number[] | null)[][]) => {
-  let result = [];
-  for (let index = 0; index < possibilityArray.length; index++) {
-    for (let index2 = 0; index2 < possibilityArray.length; index2++) {
-      if (
-        possibilityArray[index][index2] !== null &&
-        possibilityArray[index][index2]?.length === 1
-      ) {
-        result.push(index);
-        result.push(index2);
-        const value = possibilityArray[index][index2] ?? [];
-        result.push(value[0]);
-        break;
+  const getSinglePossibility = (possibilityArray: (number[] | null)[][]) => {
+    let result = [];
+    for (let index = 0; index < possibilityArray.length; index++) {
+      for (let index2 = 0; index2 < possibilityArray.length; index2++) {
+        if (
+          possibilityArray[index][index2] !== null &&
+          possibilityArray[index][index2]?.length === 1
+        ) {
+          result.push(index);
+          result.push(index2);
+          const value = possibilityArray[index][index2] ?? [];
+          result.push(value[0]);
+          break;
+        }
       }
     }
-  }
-  return result;
-};
+    return result;
+  };
 
-const isSudokuSolved = (grid: (number | null)[][]) => {
-  let result = true;
-  for (let index = 0; index < grid.length; index++) {
-    for (let index2 = 0; index2 < grid[index].length; index2++) {
-      if (grid[index][index2] === null) {
-        result = false;
-        break;
+  const isSudokuSolved = (grid: (number | null)[][]) => {
+    let result = true;
+    for (let index = 0; index < grid.length; index++) {
+      for (let index2 = 0; index2 < grid[index].length; index2++) {
+        if (grid[index][index2] === null) {
+          result = false;
+          break;
+        }
       }
     }
-  }
-  return result;
-};
+    return result;
+  };
 
-const performBacktrackOnGrid = (
-  grid: (number | null)[][],
-  possibilityArray: (number[] | null)[][]
-) => {
-  const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  let isNotChanged = true;
-  for (const rowNo of indices) {
-    for (const colNo of indices) {
-      const arr = possibilityArray[rowNo][colNo];
-      if (arr !== null && arr.length > 0) {
-        for (const iterator of arr) {
-          const gridCopy = grid.map((o) => o.slice());
-          gridCopy[rowNo][colNo] = iterator;
-          isNotChanged = true;
-          while (isNotChanged) {
-            const possibilityArrayCopy = buildPossibilityArray(gridCopy);
-            const singlePossibility =
-              getSinglePossibility(possibilityArrayCopy);
-            if (singlePossibility.length > 0) {
-              gridCopy[singlePossibility[0]][singlePossibility[1]] =
-                singlePossibility[2];
-            } else {
-              isNotChanged = false;
+  const performBacktrackOnGrid = (
+    grid: (number | null)[][],
+    possibilityArray: (number[] | null)[][]
+  ) => {
+    const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    let isNotChanged = true;
+    for (const rowNo of indices) {
+      for (const colNo of indices) {
+        const arr = possibilityArray[rowNo][colNo];
+        if (arr !== null && arr.length > 0) {
+          for (const iterator of arr) {
+            const gridCopy = grid.map((o) => o.slice());
+            gridCopy[rowNo][colNo] = iterator;
+            isNotChanged = true;
+            while (isNotChanged) {
+              const possibilityArrayCopy = buildPossibilityArray(gridCopy);
+              const singlePossibility =
+                getSinglePossibility(possibilityArrayCopy);
+              if (singlePossibility.length > 0) {
+                gridCopy[singlePossibility[0]][singlePossibility[1]] =
+                  singlePossibility[2];
+              } else {
+                isNotChanged = false;
+              }
             }
-          }
-          if (isSudokuSolved(gridCopy)) {
-            const validateResult = validateSudoku(gridCopy);
-            if (!validateResult.hasError) {
-              return gridCopy;
+            if (isSudokuSolved(gridCopy)) {
+              const validateResult = validateSudoku(gridCopy);
+              if (!validateResult.hasError) {
+                return gridCopy;
+              }
             }
           }
         }
       }
     }
-  }
-  return grid;
+    return grid;
+  };
+
+  return {
+    validateSudoku: validateSudoku,
+    buildPossibilityArray: buildPossibilityArray,
+    getSinglePossibility: getSinglePossibility,
+    isSudokuSolved: isSudokuSolved,
+    performBacktrackOnGrid: performBacktrackOnGrid,
+  };
 };
 
-const sudokuGridUtils = {
-  validateSudoku: validateSudoku,
-  buildPossibilityArray: buildPossibilityArray,
-  getSinglePossibility: getSinglePossibility,
-  isSudokuSolved: isSudokuSolved,
-  performBacktrackOnGrid: performBacktrackOnGrid,
-};
-
-export default sudokuGridUtils;
+export default useSudokuGrid;

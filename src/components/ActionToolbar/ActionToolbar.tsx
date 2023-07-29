@@ -13,7 +13,7 @@ import {
   setGridValueFromIndices,
   setSolvingMode,
 } from "../../store/slice";
-import sudokuGridUtils from "../../util/sudokuGridUtil";
+import useSudokuGrid from "../../util/sudokuGridUtil";
 
 import "./ActionToolbar.css";
 import { cloneDeep } from "lodash";
@@ -30,7 +30,7 @@ const ActionToolbar = () => {
     isSudokuSolved,
     validateSudoku,
     performBacktrackOnGrid,
-  } = sudokuGridUtils;
+  } = useSudokuGrid();
 
   const onResetPress = () => {
     dispatch(resetGrid());
@@ -62,7 +62,7 @@ const ActionToolbar = () => {
           dispatch(
             setErrorMessage({
               state: "Success",
-              message: "Sudoku is getting solved!!",
+              message: "The Sudoku has got solved!!",
             })
           );
         } else {
@@ -104,7 +104,7 @@ const ActionToolbar = () => {
       dispatch(
         setErrorMessage({
           state: "Success",
-          message: "Sudoku is getting solved!!",
+          message: "The Sudoku has got solved!!",
         })
       );
     };
