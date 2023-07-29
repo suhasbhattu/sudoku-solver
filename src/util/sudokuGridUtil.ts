@@ -229,11 +229,42 @@ const isSudokuSolved = (grid: (number | null)[][]) => {
   return result;
 };
 
-const performBacktrack = (
+const performBacktrackOnGrid = (
   grid: (number | null)[][],
   possibilityArray: (number[] | null)[][]
 ) => {
-  
+  const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  let isNotChanged = true;
+  for (const rowNo of indices) {
+    for (const colNo of indices) {
+      const arr = possibilityArray[rowNo][colNo];
+      if (arr !== null && arr.length > 0) {
+        for (const iterator of arr) {
+          const gridCopy = grid.map((o) => o.slice());
+          gridCopy[rowNo][colNo] = iterator;
+          isNotChanged = true;
+          while (isNotChanged) {
+            const possibilityArrayCopy = buildPossibilityArray(gridCopy);
+            const singlePossibility =
+              getSinglePossibility(possibilityArrayCopy);
+            if (singlePossibility.length > 0) {
+              gridCopy[singlePossibility[0]][singlePossibility[1]] =
+                singlePossibility[2];
+            } else {
+              isNotChanged = false;
+            }
+          }
+          if (isSudokuSolved(gridCopy)) {
+            const validateResult = validateSudoku(gridCopy);
+            if (!validateResult.hasError) {
+              return gridCopy;
+            }
+          }
+        }
+      }
+    }
+  }
+  return grid;
 };
 
 const sudokuGridUtils = {
@@ -241,7 +272,7 @@ const sudokuGridUtils = {
   buildPossibilityArray: buildPossibilityArray,
   getSinglePossibility: getSinglePossibility,
   isSudokuSolved: isSudokuSolved,
-  performBacktrack: performBacktrack,
+  performBacktrackOnGrid: performBacktrackOnGrid,
 };
 
 export default sudokuGridUtils;

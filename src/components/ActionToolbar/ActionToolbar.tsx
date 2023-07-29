@@ -16,6 +16,7 @@ import {
 import sudokuGridUtils from "../../util/sudokuGridUtil";
 
 import "./ActionToolbar.css";
+import { cloneDeep } from "lodash";
 
 const ActionToolbar = () => {
   const dispatch = useDispatch();
@@ -24,8 +25,12 @@ const ActionToolbar = () => {
   const sudokuGrid = useSelector(selectGrid);
   const possibilityArray = useSelector(selectPossibilityArray);
   const backtrackModeOn = useSelector(selectBacktrackModeOn);
-  const { getSinglePossibility, isSudokuSolved, validateSudoku } =
-    sudokuGridUtils;
+  const {
+    getSinglePossibility,
+    isSudokuSolved,
+    validateSudoku,
+    performBacktrackOnGrid,
+  } = sudokuGridUtils;
 
   const onResetPress = () => {
     dispatch(resetGrid());
@@ -81,13 +86,38 @@ const ActionToolbar = () => {
   ]);
 
   useEffect(() => {
-    const performbackTrack = () => {
+    const performbackTrack = async () => {
+      const gridSolved = performBacktrackOnGrid(
+        cloneDeep(sudokuGrid),
+        cloneDeep(possibilityArray)
+      );
+      for (let i = 0; i < sudokuGrid.length; i++) {
+        for (let j = 0; j < sudokuGrid.length; j++) {
+          if (sudokuGrid[i][j] === null) {
+            await sleep(100);
+            dispatch(setGridValueFromIndices([i, j, gridSolved[i][j]]));
+          }
+        }
+      }
       dispatch(setBacktrackModeOn(false));
+      dispatch(setSolvingMode(false));
+      dispatch(
+        setErrorMessage({
+          state: "Success",
+          message: "Sudoku is getting solved!!",
+        })
+      );
     };
     if (backtrackModeOn) {
       performbackTrack();
     }
-  }, [backtrackModeOn, dispatch]);
+  }, [
+    backtrackModeOn,
+    dispatch,
+    performBacktrackOnGrid,
+    sudokuGrid,
+    possibilityArray,
+  ]);
 
   return (
     <div className="ActionToolbar">
