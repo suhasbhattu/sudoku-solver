@@ -13,7 +13,13 @@
 .SudokuGridCell {
   height: 4rem;
   width: 4rem;
-  border: solid 1px #1a120b;
+  border: solid 1px #1a120b;  
+}
+
+.SudokuGridInput {
+  height: 4rem;
+  width: 4rem;
+  border: none;
   text-align: center;
   font-size: 35px;
   font-family: "Varela Round", sans-serif;

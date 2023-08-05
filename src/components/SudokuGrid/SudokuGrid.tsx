@@ -4,6 +4,7 @@ import {
   selectActiveCell,
   selectErrorMessage,
   selectGrid,
+  selectSolvingMode,
   setActiveCell,
   setErrorMessage,
   setGridValue,
@@ -17,6 +18,7 @@ const SudokuGrid = () => {
   const sudokuGrid = useSelector(selectGrid);
   const errorMessage = useSelector(selectErrorMessage);
   const activeCell = useSelector(selectActiveCell);
+  const solvingMode = useSelector(selectSolvingMode);
   const dispatch = useDispatch();
   const { validateSudoku, buildPossibilityArray } = useSudokuGrid();
 
@@ -24,11 +26,15 @@ const SudokuGrid = () => {
     dispatch(setActiveCell([rowNumber, columnNumber]));
   };
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLTableCellElement>) => {
-    const value = Number(event.key);
-    if (!isNaN(value) && value > 0 && value < 10) {
-      dispatch(setGridValue(value));
-    } else if (event.key === "Backspace" || event.key === "Delete") {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value);
+    if (!isNaN(value) && value > 0) {
+      dispatch(setGridValue(value % 10));
+    }
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Backspace" || event.key === "Delete") {
       dispatch(setGridValue(null));
     }
   };
@@ -60,10 +66,16 @@ const SudokuGrid = () => {
               key={`cell-${rowIndex}${columnIndex}`}
               className={className}
               onClick={() => onCellClick(rowIndex, columnIndex)}
-              onKeyDown={(event) => onKeyDown(event)}
-              tabIndex={0}
             >
-              {sudokuGrid[rowIndex][columnIndex] ?? ""}
+              <input
+                type="text"
+                className={"SudokuGridInput"}
+                value={sudokuGrid[rowIndex][columnIndex] ?? ""}
+                readOnly={solvingMode}
+                onChange={(event) => onChange(event)}
+                onKeyDown={(event) => onKeyDown(event)}
+                onFocus={() => onCellClick(rowIndex, columnIndex)}
+              />
             </td>
           );
         });
